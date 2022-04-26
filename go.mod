@@ -1,4 +1,4 @@
-module packages
+module github.com/diabhiue/100ms
 
 go 1.17
 

@@ -1,33 +1,51 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"github.com/diabhiue/100ms/logs"
 	"log"
-	"sort"
-	logs "packages/logs"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	var S int
-	fmt.Scan(&S)
+	reader := bufio.NewReader(os.Stdin)
+	scannedText, _ := reader.ReadString('\n')
+	inputs := strings.Fields(scannedText)
+	S, _ := strconv.Atoi(inputs[0])
 
-	Log = logs.NewLogStore(S)
+	Log := logs.NewLogStore(S)
 
 	for {
+		scannedText, _ := reader.ReadString('\n')
+		inputs := strings.Fields(scannedText)
 		var token string
-		fmt.Scan(&token)
+		token = inputs[0]
+		// fmt.Scan(&token)
 
 		if token == "ADD" {
-			var key int
+			var key int64
 			var value string
-			fmt.Scan(&key)
-			fmt.Scan(&value)
-			Log.add(key, value)
+			key, _ = strconv.ParseInt(inputs[1], 10, 64)
+			value = strings.Join(inputs[2:], " ")
+			Log.Add(key, value)
 		} else if token == "SEARCH" {
 			var word string
 			var limit int
-			fmt.Scan(&word, &limit)
-			fmt.Println(Log.search(word))
+			word = inputs[1]
+			limit, _ = strconv.Atoi(inputs[2])
+            outputKeys := Log.Search(word, limit)
+            if len(outputKeys) == 0 {
+                fmt.Print("NONE")
+            } else {
+                for _, key := range outputKeys {
+                    fmt.Print(key, " ")
+                }
+            }
+            fmt.Println()
 		} else if token == "END" {
 			break
 		} else {
@@ -35,15 +53,5 @@ func main() {
 		}
 		S--
 	}
-	fmt.Println(B)
-	//logs = LogStore()
-	arr := []int{11, 22, 23, 34}
 
-	x := 32
-	index := sort.SearchInts(arr, x)
-	if index < len(arr) && arr[index] == x {
-		fmt.Printf("So %d is present at %d\n", x, index)
-	} else {
-		fmt.Printf("Sorry, %d is not present in the array\n", x)
-	}
 }

@@ -1,8 +1,11 @@
 package trie
 
 import (
+	"fmt"
+	"reflect"
+
 	"github.com/emirpasic/gods/sets/treeset"
-	"sort"
+	"github.com/emirpasic/gods/utils"
 )
 
 const (
@@ -76,15 +79,16 @@ var CharToIndex = map[string]int{
 
 type Node struct {
 	Char     string
-	Numbers  *treeset.Set
+	Numbers  treeset.Set
 	Children [ALPHANUMERIC_SIZE]*Node
 }
 
 func NewNode(char string) *Node {
 	node := &Node{
 		Char:    char,
-		Numbers: treeset.NewWithIntComparator(),
+		Numbers: *treeset.NewWith(utils.Int64Comparator),
 	}
+	// node.Numbers := treeset.NewWith(utils.Int64Comparator)
 	for i := 0; i < ALPHANUMERIC_SIZE; i++ {
 		node.Children[i] = nil
 	}
@@ -96,15 +100,15 @@ type Trie struct {
 }
 
 func NewTrie() *Trie {
-	root = NewNode("\000")
+	root := NewNode("\000")
 	return &Trie{Root: root}
 }
 
-func (t *Trie) Insert(word string, num int) error {
+func (t *Trie) Insert(word string, num int64) error {
 	current := t.Root
 
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[word[i]]
+		index := CharToIndex[string(word[i])]
 		if current.Children[index] == nil {
 			current.Children[index] = NewNode(word)
 		}
@@ -114,24 +118,34 @@ func (t *Trie) Insert(word string, num int) error {
 	return nil
 }
 
-func (t *Trie) Delete(word string, num int) error {
+func (t *Trie) Delete(word string, num int64) error {
 	current := t.Root
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[word[i]]
+		index := CharToIndex[string(word[i])]
 		current = current.Children[index]
 	}
 	current.Numbers.Remove(num)
 	return nil
 }
 
-func (t *Trie) GetNumbers(word string) *treeset.Set {
+func (t *Trie) GetCounters(word string, limit int) []int64 {
 	current := t.Root
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[word[i]]
+		index := CharToIndex[string(word[i])]
 		if current.Children[index] == nil {
-			return nil
+			return make([]int64, 0)
 		}
 		current = current.Children[index]
 	}
-	return current.Numbers
+	fmt.Println(reflect.TypeOf(current))
+	itr := current.Numbers.Iterator()
+	itr.End()
+
+	var Counters []int64
+	for itr.Prev() && limit > 0 {
+		value := itr.Value().(int64)
+		Counters = append(Counters, value)
+		limit--
+	}
+	return Counters
 }
