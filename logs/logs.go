@@ -22,7 +22,7 @@ func NewLogStore(size int) *LogStore {
 		EndCounter:    0,
 		KeyCounterMap: make(map[int64]int64),
 		CounterKeyMap: make(map[int64]int64),
-        WordTrie: trie.NewTrie(),
+		WordTrie:      trie.NewTrie(),
 	}
 	return Log
 }

@@ -85,7 +85,7 @@ func NewNode(char string) *Node {
 		Char:    char,
 		Numbers: *treeset.NewWith(utils.Int64Comparator),
 	}
-    
+
 	for i := 0; i < ALPHANUMERIC_SIZE; i++ {
 		node.Children[i] = nil
 	}

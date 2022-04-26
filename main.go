@@ -37,17 +37,17 @@ func main() {
 			var limit int
 			word = inputs[1]
 			limit, _ = strconv.Atoi(inputs[2])
-            outputKeys := Log.Search(word, limit)
-            if len(outputKeys) == 0 {
-                fmt.Print("NONE")
-            } else {
-                for _, key := range outputKeys {
-                    fmt.Print(key, " ")
-                }
-            }
-            fmt.Println()
+			outputKeys := Log.Search(word, limit)
+			if len(outputKeys) == 0 {
+				fmt.Print("NONE")
+			} else {
+				for _, key := range outputKeys {
+					fmt.Print(key, " ")
+				}
+			}
+			fmt.Println()
 		} else if token == "END" {
-            fmt.Println("END")
+			fmt.Println("END")
 			break
 		} else {
 			log.Fatal(errors.New("Not a valid token"))
