@@ -47,6 +47,7 @@ func main() {
             }
             fmt.Println()
 		} else if token == "END" {
+            fmt.Println("END")
 			break
 		} else {
 			log.Fatal(errors.New("Not a valid token"))

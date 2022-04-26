@@ -1,9 +1,6 @@
 package trie
 
 import (
-	"fmt"
-	"reflect"
-
 	"github.com/emirpasic/gods/sets/treeset"
 	"github.com/emirpasic/gods/utils"
 )
@@ -12,7 +9,7 @@ const (
 	ALPHANUMERIC_SIZE = 62
 )
 
-var CharToIndex = map[string]int{
+var charToIndex = map[string]int{
 	"0": 0,
 	"1": 1,
 	"2": 2,
@@ -88,7 +85,7 @@ func NewNode(char string) *Node {
 		Char:    char,
 		Numbers: *treeset.NewWith(utils.Int64Comparator),
 	}
-	// node.Numbers := treeset.NewWith(utils.Int64Comparator)
+    
 	for i := 0; i < ALPHANUMERIC_SIZE; i++ {
 		node.Children[i] = nil
 	}
@@ -108,7 +105,7 @@ func (t *Trie) Insert(word string, num int64) error {
 	current := t.Root
 
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[string(word[i])]
+		index := charToIndex[string(word[i])]
 		if current.Children[index] == nil {
 			current.Children[index] = NewNode(word)
 		}
@@ -121,7 +118,7 @@ func (t *Trie) Insert(word string, num int64) error {
 func (t *Trie) Delete(word string, num int64) error {
 	current := t.Root
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[string(word[i])]
+		index := charToIndex[string(word[i])]
 		current = current.Children[index]
 	}
 	current.Numbers.Remove(num)
@@ -131,13 +128,12 @@ func (t *Trie) Delete(word string, num int64) error {
 func (t *Trie) GetCounters(word string, limit int) []int64 {
 	current := t.Root
 	for i := 0; i < len(word); i++ {
-		index := CharToIndex[string(word[i])]
+		index := charToIndex[string(word[i])]
 		if current.Children[index] == nil {
 			return make([]int64, 0)
 		}
 		current = current.Children[index]
 	}
-	fmt.Println(reflect.TypeOf(current))
 	itr := current.Numbers.Iterator()
 	itr.End()
 
