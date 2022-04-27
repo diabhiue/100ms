@@ -12,20 +12,27 @@ import (
 )
 
 func main() {
+    // Initialize reader and read line by line
     reader := bufio.NewReader(os.Stdin)
+
+    // Input max size of Log store
     scannedText, _ := reader.ReadString('\n')
     inputs := strings.Fields(scannedText)
     S, _ := strconv.Atoi(inputs[0])
 
+    // Create Log object of max size S
     Log := logs.NewLogStore(S)
 
     for {
+        // Read line from stdin and split it on whitespace
         scannedText, _ := reader.ReadString('\n')
         inputs := strings.Fields(scannedText)
+
+        // Store the keyword to identify action to be done
         var token string
         token = inputs[0]
-        // fmt.Scan(&token)
 
+        // Based on input, add, search or end the process
         if token == "ADD" {
             var key int64
             var value string
@@ -52,7 +59,5 @@ func main() {
         } else {
             log.Fatal(errors.New("Not a valid token"))
         }
-        S--
     }
-
 }

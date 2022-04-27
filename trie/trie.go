@@ -9,6 +9,7 @@ const (
     ALPHANUMERIC_SIZE = 62
 )
 
+// char to index for trie children
 var charToIndex = map[string]int{
     "0": 0,
     "1": 1,
@@ -74,13 +75,26 @@ var charToIndex = map[string]int{
     "Z": 61,
 }
 
+// Trie Node struct
+// At every node, there is a `treeset.Set` which is basically TreeMap
+// which uses Red-Black tree (balanced Binary Search Tree) under the hood.
+// This data structure stores numbers with Int64 data type. This data
+// structure can do following things:
+//   i) Insert a Number: O(logn)
+//  ii) Remove a Number: O(logn)
+// iii) Iterate through all Numbers in sorted order: O(N)
 type Node struct {
     Char     string
     Numbers  treeset.Set
     Children [ALPHANUMERIC_SIZE]*Node
 }
 
+// Return new Trie Node
 func NewNode(char string) *Node {
+
+    // Initialize a Trie Node
+    // Initialize `Numbers` as `treeset.Set` which stores numbers with
+    // Int64 data type
     node := &Node{
         Char:    char,
         Numbers: *treeset.NewWith(utils.Int64Comparator),
@@ -92,18 +106,22 @@ func NewNode(char string) *Node {
     return node
 }
 
+// Trie struct
 type Trie struct {
     Root *Node
 }
 
+// Return a Trie with root as "\000"
 func NewTrie() *Trie {
     root := NewNode("\000")
     return &Trie{Root: root}
 }
 
+// Insert a number corresponding to a word using a Trie
 func (t *Trie) Insert(word string, num int64) error {
     current := t.Root
 
+    // Iterate through end of string `word`
     for i := 0; i < len(word); i++ {
         index := charToIndex[string(word[i])]
         if current.Children[index] == nil {
@@ -111,22 +129,30 @@ func (t *Trie) Insert(word string, num int64) error {
         }
         current = current.Children[index]
     }
+
+    // Add the `num` in set `current.Numbers`
     current.Numbers.Add(num)
     return nil
 }
 
+// Delete a number corresponding to a word using Trie
 func (t *Trie) Delete(word string, num int64) error {
     current := t.Root
     for i := 0; i < len(word); i++ {
         index := charToIndex[string(word[i])]
         current = current.Children[index]
     }
+
+    // Remove the `num` from set `current.Numbers`
     current.Numbers.Remove(num)
     return nil
 }
 
+// Returns latest `limit` numbers corresponding to `word` in the Trie
 func (t *Trie) GetCounters(word string, limit int) []int64 {
     current := t.Root
+
+    // Iterate through the end of string `word`
     for i := 0; i < len(word); i++ {
         index := charToIndex[string(word[i])]
         if current.Children[index] == nil {
@@ -134,9 +160,13 @@ func (t *Trie) GetCounters(word string, limit int) []int64 {
         }
         current = current.Children[index]
     }
+
+    // Initialize an iterator and move it to end of the set `current.Numbers`
     itr := current.Numbers.Iterator()
     itr.End()
 
+    // Iterate backwards either till there is still some number present in
+    // the set or `limit` numbers has been stored in `Counters` array
     var Counters []int64
     for itr.Prev() && limit > 0 {
         value := itr.Value().(int64)
